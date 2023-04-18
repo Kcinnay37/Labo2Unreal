@@ -16,17 +16,20 @@ class LABO2UNREAL_API UTheBossAnimInstance : public UAnimInstance
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetPawnCurrentSpeed();
+	float GetPawnCurrentSpeed();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetPawnDirection();
+	float GetPawnDirection();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintThreadSafe))
-		bool GetPlayerCrouch();
+	bool GetPlayerCrouch();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintThreadSafe))
-		bool GetPlayerDanse();
+	bool GetPlayerDanse();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetPlayerTurn();
+	float GetPlayerTurn();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintThreadSafe))
+	bool GetPlayerDead();
 };

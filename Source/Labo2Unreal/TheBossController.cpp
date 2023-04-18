@@ -3,6 +3,7 @@
 #include "TheBossController.h"
 #include "GameFramework/Character.h"
 #include "Engine/World.h"
+#include"Avatar.h"
 #include <cmath>
 
 void ATheBossController::SetupInputComponent()
@@ -22,12 +23,28 @@ void ATheBossController::SetupInputComponent()
 
 		InputComponent->BindAction("Run", IE_Pressed, this, &ATheBossController::BeginRun);
 		InputComponent->BindAction("Run", IE_Released, this, &ATheBossController::EndRun);
+
+		InputComponent->BindAction("UseItem", IE_Pressed, this, &ATheBossController::UseItem);
 	}
+}
+
+void ATheBossController::BeginPlay()
+{
+	APawn* pawn = GetPawn();
+	if (!pawn) return;
+
+	AAvatar* player = Cast<AAvatar>(pawn);
+	if (!player) return;
+	
+	FScriptDelegate delegate;
+	delegate.BindUFunction(this, FName("PlayerDead"));
+
+	player->AddOnDelegate(delegate);
 }
 
 void ATheBossController::MoveForward(float axisValue)
 {
-	if (axisValue == 0) return;
+	if (axisValue == 0 || isDead) return;
 
 	APawn* controlledPawn = GetPawn();
 	if (!controlledPawn) return;
@@ -41,7 +58,7 @@ void ATheBossController::MoveForward(float axisValue)
 
 void ATheBossController::MoveRight(float axisValue)
 {
-	if (axisValue == 0) return;
+	if (axisValue == 0 || isDead) return;
 
 	APawn* controlledPawn = GetPawn();
 	if (!controlledPawn) return;
@@ -81,7 +98,7 @@ void ATheBossController::SetCurrentRatioWalkSpeed()
 
 void ATheBossController::BeginCrouch()
 {
-	if (isDancing) return;
+	if (isDancing || isDead) return;
 
 	APawn* controlledPawn = GetPawn();
 	if (!controlledPawn) return;
@@ -114,6 +131,8 @@ bool ATheBossController::GetIsCrouch() const
 
 void ATheBossController::ChangeDanseState()
 {
+	if (isDead) return;
+
 	isDancing = !isDancing;
 
 	APawn* controlledPawn = GetPawn();
@@ -156,4 +175,31 @@ void ATheBossController::LookRight(float axisValue)
 float ATheBossController::GetRotationSpeed() const
 {
 	return currentRotationSpeed;
+}
+
+void ATheBossController::PlayerDead()
+{
+	EndCrouch();
+	if (isDancing)
+	{
+		ChangeDanseState();
+	}
+
+	APawn* pawn = GetPawn();
+	if (!pawn) return;
+	pawn->bUseControllerRotationYaw = false;
+
+
+	isDead = true;
+}
+
+void ATheBossController::UseItem()
+{
+	APawn* pawn = GetPawn();
+	if (!IsValid(pawn)) return;
+
+	AAvatar* player = Cast<AAvatar>(pawn);
+	if (!IsValid(player)) return;
+
+	player->UseItem();
 }

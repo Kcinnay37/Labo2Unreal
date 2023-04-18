@@ -6,6 +6,12 @@
 #include "GameFramework/Character.h"
 #include "Avatar.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerDeadDelegate);
+
+class UItemData;
+class UItemBehavior;
+struct FBonusesStat;
+
 UCLASS()
 class LABO2UNREAL_API AAvatar : public ACharacter
 {
@@ -41,10 +47,35 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetPortrait();
 
+	void AddOnDelegate(FScriptDelegate DelagateToAdd);
+
+	bool GetIsDead() const;
+
+	bool CollectItem(UItemData* item);
+	void PopItem();
+	void UseItem();
+
+	void AddPermanentStat(FBonusesStat* bonusStat);
+
+	void SavePlayerData();
+	void LoadPlayerData();
+	void ResetPlayerData();
+
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnNbItemEquipChanged(int currNb, UTexture2D* currTexture);
+
 private:
-	float CurrentHealth;
+	float CurrentHealth = 1;
+
+	UPROPERTY()
+	FPlayerDeadDelegate PlayerDeadDelegate;
+
+	UItemData* DataItemEquip = nullptr;
+	int NbItemEquip = 0;
+	UItemBehavior* ItemBehavior = nullptr;
 };

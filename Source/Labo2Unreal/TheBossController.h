@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "TheBossController.generated.h"
 
+
 /**
  *
  */
@@ -34,6 +35,7 @@ private:
 	float currentRotationSpeed = 0;
 
 	bool isDancing = false;
+	bool isDead = false;
 
 	void MoveForward(float axisValue);
 	void MoveRight(float axisValue);
@@ -51,4 +53,10 @@ private:
 	void LookUp(float axisValue);
 	void LookRight(float axisValue);
 
+	void UseItem();
+
+	UFUNCTION()
+	void PlayerDead();
+protected:
+	virtual void BeginPlay() override;
 };

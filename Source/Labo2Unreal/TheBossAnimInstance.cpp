@@ -2,6 +2,7 @@
 
 #include "TheBossAnimInstance.h"
 #include "TheBossController.h"
+#include "Avatar.h"
 
 float UTheBossAnimInstance::GetPawnCurrentSpeed()
 {
@@ -91,4 +92,15 @@ float UTheBossAnimInstance::GetPlayerTurn()
 	float turnValue = character->GetRotationSpeed() * 180 * 180;
 
 	return turnValue;
+}
+
+bool UTheBossAnimInstance::GetPlayerDead()
+{
+	const APawn* pawn = TryGetPawnOwner();
+	if (!pawn) return false;
+
+	const AAvatar* player = Cast<AAvatar>(pawn);
+	if (!player) return false;
+	
+	return player->GetIsDead();
 }
