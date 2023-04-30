@@ -7,7 +7,6 @@
 #include "UObject/ObjectMacros.h"
 #include "ItemData.generated.h"
 
-class AStaticMesh;
 class UItemBehavior;
 
 USTRUCT(BlueprintType)
@@ -35,6 +34,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int MaxStack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool PopOnUse;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UItemBehavior> ItemBehavior;

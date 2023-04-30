@@ -7,7 +7,7 @@
 #include "Item.generated.h"
 
 class UBoxComponent;
-class AAvatar;
+class AMyPlayer;
 class UItemData;
 
 /**
@@ -32,7 +32,7 @@ protected:
 public:
 	AItem();
 
-	bool Pickup(AAvatar* avatar);
+	bool Pickup(AMyPlayer* player);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UItemData* ItemData;

@@ -2,4 +2,9 @@
 
 
 #include "MyGameInstance.h"
+#include "DataPlayer.h"
 
+void UMyGameInstance::Init()
+{
+	PlayerData = NewObject<UDataPlayer>();
+}

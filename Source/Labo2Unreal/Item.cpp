@@ -2,7 +2,7 @@
 
 
 #include "Item.h"
-#include "Avatar.h"
+#include "MyPlayer.h"
 #include "Components/BoxComponent.h"
 #include "ItemData.h"
 
@@ -21,17 +21,17 @@ void AItem::BeginPlay()
 
 void AItem::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AAvatar* avatar = Cast<AAvatar>(OtherActor);
-	if (IsValid(avatar))
+	AMyPlayer* player = Cast<AMyPlayer>(OtherActor);
+	if (IsValid(player))
 	{
-		if (Pickup(avatar))
+		if (Pickup(player))
 		{
 			Destroy();
 		}
 	}
 }
 
-bool AItem::Pickup(AAvatar* avatar)
+bool AItem::Pickup(AMyPlayer* player)
 {
-	return avatar->CollectItem(ItemData);
+	return player->CollectItem(ItemData);
 }

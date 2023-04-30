@@ -6,10 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Avatar.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerDeadDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAvatarDeadDelegate);
 
-class UItemData;
-class UItemBehavior;
 struct FBonusesStat;
 
 UCLASS()
@@ -37,45 +35,31 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealth();
-
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHealth();
-
 	UFUNCTION(BlueprintCallable)
 	float GetPercentHealth();
-
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetPortrait();
-
-	void AddOnDelegate(FScriptDelegate DelagateToAdd);
-
 	bool GetIsDead() const;
 
-	bool CollectItem(UItemData* item);
-	void PopItem();
-	void UseItem();
+	void SetHealth(float Healt);
 
+	void AddOnDelegate(FScriptDelegate DelagateToAdd);
 	void AddPermanentStat(FBonusesStat* bonusStat);
-
-	void SavePlayerData();
-	void LoadPlayerData();
-	void ResetPlayerData();
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnNbItemEquipChanged(int currNb, UTexture2D* currTexture);
+	virtual void SaveData();
+	virtual void LoadData();
+	virtual void ResetData();
 
 private:
 	float CurrentHealth = 1;
-
+	
 	UPROPERTY()
-	FPlayerDeadDelegate PlayerDeadDelegate;
-
-	UItemData* DataItemEquip = nullptr;
-	int NbItemEquip = 0;
-	UItemBehavior* ItemBehavior = nullptr;
+	FAvatarDeadDelegate AvatarDeadDelegate;
 };

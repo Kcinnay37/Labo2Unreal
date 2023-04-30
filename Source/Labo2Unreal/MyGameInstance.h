@@ -6,20 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "MyGameInstance.generated.h"
 
-class UItemData;
-
-USTRUCT(BlueprintType)
-struct FPlayerData
-{
-	GENERATED_BODY()
-public:
-	bool PlayerDataInit;
-
-	float Health;
-
-	UItemData* DataItemEquip;
-	int NbItemEquip;
-};
+class UDataPlayer;
 
 /**
  * 
@@ -29,5 +16,8 @@ class LABO2UNREAL_API UMyGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 public:
-	FPlayerData PlayerData;
+	virtual void Init() override;
+
+	UPROPERTY()
+	UDataPlayer* PlayerData;
 };

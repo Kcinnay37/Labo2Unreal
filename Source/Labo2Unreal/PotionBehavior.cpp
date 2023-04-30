@@ -2,11 +2,15 @@
 
 
 #include "PotionBehavior.h"
-#include "Avatar.h"
+#include "MyPlayer.h"
 #include "ItemData.h"
 
-void UPotionBehavior::Use(AAvatar* avatar, UItemData* itemData)
+void UPotionBehavior::Use(AMyPlayer* player, UItemData* itemData)
 {
-	avatar->AddPermanentStat(&itemData->Stat);
-	avatar->PopItem();
+	player->AddPermanentStat(&itemData->Stat);
+
+	if (itemData->PopOnUse)
+	{
+		player->PopItem();
+	}
 }

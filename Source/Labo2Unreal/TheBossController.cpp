@@ -3,7 +3,7 @@
 #include "TheBossController.h"
 #include "GameFramework/Character.h"
 #include "Engine/World.h"
-#include"Avatar.h"
+#include"MyPlayer.h"
 #include <cmath>
 
 void ATheBossController::SetupInputComponent()
@@ -33,7 +33,7 @@ void ATheBossController::BeginPlay()
 	APawn* pawn = GetPawn();
 	if (!pawn) return;
 
-	AAvatar* player = Cast<AAvatar>(pawn);
+	AMyPlayer* player = Cast<AMyPlayer>(pawn);
 	if (!player) return;
 	
 	FScriptDelegate delegate;
@@ -198,7 +198,7 @@ void ATheBossController::UseItem()
 	APawn* pawn = GetPawn();
 	if (!IsValid(pawn)) return;
 
-	AAvatar* player = Cast<AAvatar>(pawn);
+	AMyPlayer* player = Cast<AMyPlayer>(pawn);
 	if (!IsValid(player)) return;
 
 	player->UseItem();

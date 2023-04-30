@@ -2,10 +2,10 @@
 
 
 #include "ItemBehavior.h"
-#include "Avatar.h"
+#include "MyPlayer.h"
 #include "ItemData.h"
 
-void UItemBehavior::Use(AAvatar* avatar, UItemData* itemData)
+void UItemBehavior::Use(AMyPlayer* player, UItemData* itemData)
 {
 
 }

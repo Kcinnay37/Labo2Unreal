@@ -6,7 +6,7 @@
 #include "ItemBehavior.h"
 #include "PotionBehavior.generated.h"
 
-class AAvatar;
+class AMyPlayer;
 class UItemData;
 
 /**
@@ -17,5 +17,5 @@ class LABO2UNREAL_API UPotionBehavior : public UItemBehavior
 {
 	GENERATED_BODY()
 public:
-	virtual void Use(AAvatar* avatar, UItemData* itemData) override;
+	virtual void Use(AMyPlayer* player, UItemData* itemData) override;
 };

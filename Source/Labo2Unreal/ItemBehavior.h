@@ -6,7 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "ItemBehavior.generated.h"
 
-class AAvatar;
+class AMyPlayer;
 class UItemData;
 
 /**
@@ -18,5 +18,5 @@ class LABO2UNREAL_API UItemBehavior : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual void Use(AAvatar* avatar, UItemData* itemData);
+	virtual void Use(AMyPlayer* player, UItemData* itemData);
 };

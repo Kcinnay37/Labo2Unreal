@@ -6,7 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include"Avatar.h"
+#include"MyPlayer.h"
 
 APortal::APortal()
 {
@@ -23,7 +23,7 @@ void APortal::BeginPlay()
 
 void APortal::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	AAvatar* player = Cast<AAvatar>(OtherActor);
+	AMyPlayer* player = Cast<AMyPlayer>(OtherActor);
 
 	if (IsValid(player))
 	{
