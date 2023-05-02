@@ -5,6 +5,9 @@
 #include "Avatar.h"
 #include"DrawDebugHelpers.h"
 #include "AIController.h"
+#include "Animation/AnimInstance.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "MeleeWeapon.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -17,6 +20,18 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (MeleeWeaponClass)
+	{
+		UWorld* World = GetWorld();
+		MeleeWeapon = World->SpawnActor<AMeleeWeapon>(MeleeWeaponClass, FVector(), FRotator());
+
+		const USkeletalMeshSocket* Socket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+		if (Socket)
+		{
+			Socket->AttachActor(MeleeWeapon, GetMesh());
+		}
+	}
 }
 
 // Called every frame
@@ -39,7 +54,7 @@ void AEnemy::Tick(float DeltaTime)
 					{
 						AI->StopMovement();
 					}
-					AttackTarget();
+					AttackTarget(DeltaTime);
 				}
 				else
 				{
@@ -59,6 +74,24 @@ void AEnemy::OnPerception(AActor* Other)
 		{
 			CurrTarget = Target;
 		}
+	}
+}
+
+void AEnemy::BeginAttack()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "BEGIN");
+	if (MeleeWeapon)
+	{
+		MeleeWeapon->BeginSwing(this);
+	}
+}
+
+void AEnemy::EndAttack()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "END");
+	if (MeleeWeapon)
+	{
+		MeleeWeapon->ResetSwing();
 	}
 }
 
@@ -113,9 +146,24 @@ bool AEnemy::CanAttackTarget()
 	return false;
 }
 
-void AEnemy::AttackTarget()
+void AEnemy::AttackTarget(float DeltaTime)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "ATTACK");
+	AttackTimer -= DeltaTime;
+	if (AttackTimer <= 0.0f)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "ATTACK");
+		if (AttackMontage)
+		{
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			if (AnimInstance)
+			{
+				AnimInstance->Montage_JumpToSection(FName("Slash"), AttackMontage);
+				AnimInstance->Montage_Play(AttackMontage);
+			}
+		}
+
+		AttackTimer = AttackRate;
+	}
 }
 
 void AEnemy::ChaseTarget()
