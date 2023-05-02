@@ -195,6 +195,8 @@ void ATheBossController::PlayerDead()
 
 void ATheBossController::UseItem()
 {
+	if (isDead) return;
+
 	APawn* pawn = GetPawn();
 	if (!IsValid(pawn)) return;
 

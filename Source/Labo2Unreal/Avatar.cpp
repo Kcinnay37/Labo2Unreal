@@ -4,6 +4,7 @@
 #include "Avatar.h"
 #include "CharacterAttribute.h"
 #include "ItemData.h"
+#include "MyGameInstance.h"
 
 // Sets default values
 AAvatar::AAvatar()
