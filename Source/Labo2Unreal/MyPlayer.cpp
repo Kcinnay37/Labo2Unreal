@@ -14,16 +14,7 @@ bool AMyPlayer::CollectItem(UItemData* item)
 	{
 		if (GameInstance->PlayerData->CollectItem(item))
 		{
-			FInventorySlot InventorySlot = GameInstance->PlayerData->GetInventorySlotEquip();
-
-			if (InventorySlot.DataItem != nullptr)
-			{
-				OnItemEquipChanged(InventorySlot.Nb, InventorySlot.DataItem->Image);
-			}
-			else
-			{
-				OnItemEquipChanged(0, nullptr);
-			}
+			UpdateInventoryView();
 			return true;
 		}
 	}
@@ -38,16 +29,7 @@ void AMyPlayer::PopItem()
 	{
 		GameInstance->PlayerData->PopItemEquip();
 
-		FInventorySlot InventorySlot = GameInstance->PlayerData->GetInventorySlotEquip();
-
-		if (InventorySlot.DataItem != nullptr)
-		{
-			OnItemEquipChanged(InventorySlot.Nb, InventorySlot.DataItem->Image);
-		}
-		else
-		{
-			OnItemEquipChanged(0, nullptr);
-		}
+		UpdateInventoryView();
 	}
 }
 
@@ -83,15 +65,9 @@ void AMyPlayer::LoadData()
 
 		OnHealthChanged();
 
-		FInventorySlot InventorySlot = GameInstance->PlayerData->GetInventorySlotEquip();
-		if (InventorySlot.DataItem != nullptr)
-		{
-			OnItemEquipChanged(InventorySlot.Nb, InventorySlot.DataItem->Image);
-		}
-		else
-		{
-			OnItemEquipChanged(0, nullptr);
-		}
+		UpdateInventoryView();
+
+		OnIndexEquipChange(GameInstance->PlayerData->GetIndexEquip());
 	}
 }
 
@@ -100,6 +76,37 @@ void AMyPlayer::ResetData()
 	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(GetGameInstance());
 	if (IsValid(GameInstance) && IsValid(GameInstance->PlayerData))
 	{
-		GameInstance->PlayerData->ResetData(this);
+		GameInstance->PlayerData->ResetData();
+	}
+}
+
+void AMyPlayer::UpdateInventoryView()
+{
+	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(GetGameInstance());
+	if (IsValid(GameInstance) && IsValid(GameInstance->PlayerData))
+	{
+		for (int i = 0; i < GameInstance->PlayerData->GetInventorySize(); i++)
+		{
+			FInventorySlot InventorySlot = GameInstance->PlayerData->GetInventorySlotAt(i);
+			if (InventorySlot.DataItem != nullptr)
+			{
+				OnItemEquipChanged(InventorySlot.Nb, InventorySlot.DataItem->Image, i);
+			}
+			else
+			{
+				OnItemEquipChanged(0, nullptr, i);
+			}
+		}
+	}
+}
+
+void AMyPlayer::SetIndexEquip(int index)
+{
+	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(GetGameInstance());
+	if (IsValid(GameInstance) && IsValid(GameInstance->PlayerData))
+	{
+		GameInstance->PlayerData->SetIndexEquip(index);
+
+		OnIndexEquipChange(index);
 	}
 }

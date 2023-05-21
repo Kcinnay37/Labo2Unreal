@@ -20,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void WeaponHit(AActor* Holder, AController* Controller);
+	void WeaponHit(AActor* Other, AController* Controller);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AActor* TheHolder;
@@ -29,7 +29,13 @@ public:
 	void BeginSwing(AActor* Holder);
 	void ResetSwing();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHit(AActor* ActorHit);
+
 private:
 	TArray<AActor*> IgnoredActors;
 	bool IsSwinging = false;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAcces = true))
+	float AttackDamage;
 };

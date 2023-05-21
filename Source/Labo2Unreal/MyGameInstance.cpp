@@ -8,3 +8,8 @@ void UMyGameInstance::Init()
 {
 	PlayerData = NewObject<UDataPlayer>();
 }
+
+void UMyGameInstance::ResetAllData()
+{
+	PlayerData->ResetData();
+}

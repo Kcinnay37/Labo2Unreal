@@ -26,5 +26,11 @@ public:
 	virtual void ResetData() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnItemEquipChanged(int currNb, UTexture2D* currTexture);
+	void OnItemEquipChanged(int currNb, UTexture2D* currTexture, int slot);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnIndexEquipChange(int index);
+
+	void UpdateInventoryView();
+
+	void SetIndexEquip(int index);
 };

@@ -9,6 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAvatarDeadDelegate);
 
 struct FBonusesStat;
+class AMeleeWeapon;
 
 UCLASS()
 class LABO2UNREAL_API AAvatar : public ACharacter
@@ -25,7 +26,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void Tick(float DeltaTime) override;
+	
+	float CurrentHealth = 1;
+	AMeleeWeapon* MeleeWeapon;
 public:
 	// Called every frame
 	//virtual void Tick(float DeltaTime) override;
@@ -41,6 +45,7 @@ public:
 	float GetPercentHealth();
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetPortrait();
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintThreadSafe))
 	bool GetIsDead() const;
 
 	void SetHealth(float Healt);
@@ -53,13 +58,31 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void Dead();
+
 	virtual void SaveData();
 	virtual void LoadData();
 	virtual void ResetData();
 
+	UFUNCTION(BlueprintCallable)
+	void BeginAttack();
+	UFUNCTION(BlueprintCallable)
+	void EndAttack();
+	UFUNCTION(BlueprintCallable)
+	void BeginAttackAnim();
+	UFUNCTION(BlueprintCallable)
+	void EndAttackAnim();
+
+	void Attack();
+
+	bool GetIsAttacking();
+
 private:
-	float CurrentHealth = 1;
-	
 	UPROPERTY()
 	FAvatarDeadDelegate AvatarDeadDelegate;
+
+	float AttackTimer = 0.0f;
+
+	bool bAnimAttackPlaying;
 };

@@ -36,6 +36,8 @@ private:
 	AAvatar* CurrTarget = nullptr;
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 200.0f;
+
+
 	float AttackRate = 2.0f;
 	float AttackTimer = 0.0f;
 	UPROPERTY(EditAnywhere)

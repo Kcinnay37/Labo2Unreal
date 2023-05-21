@@ -7,6 +7,8 @@
 #include "TheBossController.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractKeyPress);
+
 /**
  *
  */
@@ -21,6 +23,9 @@ public:
 	bool GetIsCrouch() const;
 	bool GetIsDancing() const;
 	float GetRotationSpeed() const;
+
+	UPROPERTY(BlueprintReadOnly)
+	FInteractKeyPress interactKeyPress;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -54,6 +59,13 @@ private:
 	void LookRight(float axisValue);
 
 	void UseItem();
+
+	void Attack();
+
+	void Interact();
+
+	void Equip0();
+	void Equip1();
 
 	UFUNCTION()
 	void PlayerDead();

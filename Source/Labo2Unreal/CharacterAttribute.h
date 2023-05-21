@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "CharacterAttribute.generated.h"
 
+class AMeleeWeapon;
 /**
  * 
  */
@@ -21,4 +22,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float AttackRate;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* AttackMontage;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AMeleeWeapon> MeleeWeaponClass;
 };

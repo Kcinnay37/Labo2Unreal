@@ -27,6 +27,7 @@ void APortal::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 
 	if (IsValid(player))
 	{
+		OnTeleport();
 		UGameplayStatics::OpenLevel(this, FName(*LevelName));
 	}
 }

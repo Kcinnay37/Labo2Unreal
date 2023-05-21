@@ -17,7 +17,9 @@ class LABO2UNREAL_API UMyGameInstance : public UGameInstance
 	GENERATED_BODY()
 public:
 	virtual void Init() override;
+	UFUNCTION(BlueprintCallable)
+	void ResetAllData();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UDataPlayer* PlayerData;
 };

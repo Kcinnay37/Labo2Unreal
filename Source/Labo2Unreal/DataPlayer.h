@@ -37,6 +37,12 @@ private:
 	UPROPERTY()
 	TArray<FInventorySlot> Inventory;
 	int IndexEquip;
+	int InventorySize = 2;
+
+	UPROPERTY()
+	TMap<FString, FVector> DictPos;
+	UPROPERTY()
+	TMap<FString, FRotator> DictRotation;
 
 	void InitData(AMyPlayer* Player);
 
@@ -45,9 +51,21 @@ public:
 
 	void LoadData(AMyPlayer* Player);
 	void SaveData(AMyPlayer* Player);
-	void ResetData(AMyPlayer* Player);
+	void ResetData();
 
 	bool CollectItem(UItemData* item);
 	void PopItemEquip();
 	FInventorySlot GetInventorySlotEquip();
+	FInventorySlot GetInventorySlotAt(int index);
+
+	void SetIndexEquip(int index);
+	int GetInventorySize();
+	int GetIndexEquip();
+
+	bool Contain(UItemData* item);
+
+	UFUNCTION(BlueprintCallable)
+	void SetSpawn(FString levelName, FVector location, FRotator rotation);
+	FVector GetSpawnLocation(FString levelName);
+	FRotator GetSpawnRotation(FString levelName);
 };

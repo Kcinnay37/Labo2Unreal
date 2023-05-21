@@ -25,6 +25,13 @@ void ATheBossController::SetupInputComponent()
 		InputComponent->BindAction("Run", IE_Released, this, &ATheBossController::EndRun);
 
 		InputComponent->BindAction("UseItem", IE_Pressed, this, &ATheBossController::UseItem);
+
+		InputComponent->BindAction("Attack", IE_Pressed, this, &ATheBossController::Attack);
+
+		InputComponent->BindAction("Interact", IE_Pressed, this, &ATheBossController::Interact);
+
+		InputComponent->BindAction("Equip0", IE_Pressed, this, &ATheBossController::Equip0);
+		InputComponent->BindAction("Equip1", IE_Pressed, this, &ATheBossController::Equip1);
 	}
 }
 
@@ -49,6 +56,12 @@ void ATheBossController::MoveForward(float axisValue)
 	APawn* controlledPawn = GetPawn();
 	if (!controlledPawn) return;
 
+	AMyPlayer* player = Cast<AMyPlayer>(controlledPawn);
+	if (player)
+	{
+		if (player->GetIsAttacking()) return;
+	}
+
 	FVector forward = controlledPawn->GetActorForwardVector();
 
 	SetCurrentRatioWalkSpeed();
@@ -62,6 +75,12 @@ void ATheBossController::MoveRight(float axisValue)
 
 	APawn* controlledPawn = GetPawn();
 	if (!controlledPawn) return;
+
+	AMyPlayer* player = Cast<AMyPlayer>(controlledPawn);
+	if (player)
+	{
+		if (player->GetIsAttacking()) return;
+	}
 
 	FVector right = controlledPawn->GetActorRightVector();
 
@@ -103,6 +122,12 @@ void ATheBossController::BeginCrouch()
 	APawn* controlledPawn = GetPawn();
 	if (!controlledPawn) return;
 
+	AMyPlayer* player = Cast<AMyPlayer>(controlledPawn);
+	if (player)
+	{
+		if (player->GetIsAttacking()) return;
+	}
+
 	ACharacter* myCharacter = Cast<ACharacter>(controlledPawn);
 	if (!myCharacter) return;
 
@@ -133,10 +158,16 @@ void ATheBossController::ChangeDanseState()
 {
 	if (isDead) return;
 
-	isDancing = !isDancing;
-
 	APawn* controlledPawn = GetPawn();
 	if (!controlledPawn) return;
+
+	AMyPlayer* player = Cast<AMyPlayer>(controlledPawn);
+	if (player)
+	{
+		if (player->GetIsAttacking()) return;
+	}
+
+	isDancing = !isDancing;
 
 	if (isDancing)
 	{
@@ -204,4 +235,58 @@ void ATheBossController::UseItem()
 	if (!IsValid(player)) return;
 
 	player->UseItem();
+}
+
+void ATheBossController::Attack()
+{
+	if (isDead) return;
+	if (isDancing)
+	{
+		ChangeDanseState();
+	}
+	if (isCrouch)
+	{
+		EndCrouch();
+	}
+
+	APawn* pawn = GetPawn();
+	if (!IsValid(pawn)) return;
+
+	AMyPlayer* player = Cast<AMyPlayer>(pawn);
+	if (!IsValid(player)) return;
+
+	player->Attack();
+}
+
+void ATheBossController::Interact()
+{
+	if (isDead) return;
+
+	interactKeyPress.Broadcast();
+}
+
+void ATheBossController::Equip0()
+{
+	if (isDead) return;
+
+	APawn* pawn = GetPawn();
+	if (!IsValid(pawn)) return;
+
+	AMyPlayer* player = Cast<AMyPlayer>(pawn);
+	if (!IsValid(player)) return;
+
+	player->SetIndexEquip(0);
+}
+
+void ATheBossController::Equip1()
+{
+	if (isDead) return;
+
+	APawn* pawn = GetPawn();
+	if (!IsValid(pawn)) return;
+
+	AMyPlayer* player = Cast<AMyPlayer>(pawn);
+	if (!IsValid(player)) return;
+
+	player->SetIndexEquip(1);
 }

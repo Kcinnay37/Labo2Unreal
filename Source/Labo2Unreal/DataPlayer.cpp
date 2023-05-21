@@ -9,7 +9,7 @@ UDataPlayer::UDataPlayer()
 {
 	DataIsInit = false;
 	Health = 0;
-	IndexEquip = -1;
+	IndexEquip = 0;
 }
 
 void UDataPlayer::InitData(AMyPlayer* Player)
@@ -17,6 +17,13 @@ void UDataPlayer::InitData(AMyPlayer* Player)
 	DataIsInit = true;
 
 	Health = Player->GetMaxHealth();
+	Inventory.Empty();
+	for (int i = 0; i < InventorySize; i++)
+	{
+		Inventory.Add(FInventorySlot());
+	}
+
+	IndexEquip = 0;
 }
 
 void UDataPlayer::LoadData(AMyPlayer* Player)
@@ -34,30 +41,37 @@ void UDataPlayer::SaveData(AMyPlayer* Player)
 	Health = Player->GetHealth();
 }
 
-void UDataPlayer::ResetData(AMyPlayer* Player)
+void UDataPlayer::ResetData()
 {
 	DataIsInit = false;
+
+	DictPos.Empty();
+	DictRotation.Empty();
 }
 
 bool UDataPlayer::CollectItem(UItemData* item)
 {
-	if (Inventory.Num() == 1)
+	for(FInventorySlot& slot : Inventory)
 	{
-		if (Inventory[0].DataItem == item && Inventory[0].Nb < item->MaxStack)
+		if (slot.DataItem == item && slot.Nb < item->MaxStack)
 		{
-			Inventory[0].Nb += 1;
+			slot.Nb += 1;
 			return true;
 		}
 	}
-	else
+
+	for (FInventorySlot& slot : Inventory)
 	{
-		FInventorySlot InventorySlot;
-		InventorySlot.DataItem = item;
-		InventorySlot.Nb = 1;
-		InventorySlot.ItemBehavior = NewObject<UItemBehavior>(this, item->ItemBehavior.Get());
-		Inventory.Add(InventorySlot);
-		IndexEquip = 0;
-		return true;
+		if (slot.DataItem == nullptr)
+		{
+			slot.DataItem = item;
+			slot.Nb = 1;
+			if (item->ItemBehavior != nullptr)
+			{
+				slot.ItemBehavior = NewObject<UItemBehavior>(this, item->ItemBehavior.Get());
+			}
+			return true;
+		}
 	}
 
 	return false;
@@ -70,10 +84,9 @@ void UDataPlayer::PopItemEquip()
 		Inventory[IndexEquip].Nb -= 1;
 		if (Inventory[IndexEquip].Nb <= 0)
 		{
+			Inventory[IndexEquip].DataItem = nullptr;
 			Inventory[IndexEquip].ItemBehavior = nullptr;
-			Inventory.RemoveAt(IndexEquip);
-
-			IndexEquip = -1;
+			Inventory[IndexEquip].Nb = 0;
 		}
 	}
 }
@@ -85,4 +98,86 @@ FInventorySlot UDataPlayer::GetInventorySlotEquip()
 		return Inventory[IndexEquip];
 	}
 	return FInventorySlot();
+}
+
+FInventorySlot UDataPlayer::GetInventorySlotAt(int index)
+{
+	return Inventory[index];
+}
+
+void UDataPlayer::SetIndexEquip(int index)
+{
+	if (index < 0)
+	{
+		IndexEquip = 0;
+	}
+	else if (IndexEquip >= InventorySize)
+	{
+		IndexEquip = InventorySize - 1;
+	}
+	else
+	{
+		IndexEquip = index;
+	}
+}
+
+int UDataPlayer::GetInventorySize()
+{
+	return InventorySize;
+}
+
+int UDataPlayer::GetIndexEquip()
+{
+	return IndexEquip;
+}
+
+bool UDataPlayer::Contain(UItemData* item)
+{
+	for (FInventorySlot& slot : Inventory)
+	{
+		if (slot.DataItem == item && slot.Nb > 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void UDataPlayer::SetSpawn(FString levelName, FVector location, FRotator rotation)
+{
+	if (DictPos.Contains(levelName))
+	{
+		DictPos[levelName] = location;
+	}
+	else
+	{
+		DictPos.Add(levelName, location);
+	}
+
+	if (DictRotation.Contains(levelName))
+	{
+		DictRotation[levelName] = rotation;
+	}
+	else
+	{
+		DictRotation.Add(levelName, rotation);
+	}
+}
+
+FVector UDataPlayer::GetSpawnLocation(FString levelName)
+{
+	if (DictPos.Contains(levelName))
+	{
+		return DictPos[levelName];
+	}
+	return FVector::ZeroVector;
+}
+
+FRotator UDataPlayer::GetSpawnRotation(FString levelName)
+{
+	if (DictRotation.Contains(levelName))
+	{
+		return DictRotation[levelName];
+	}
+	return FRotator::ZeroRotator;
 }

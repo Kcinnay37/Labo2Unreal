@@ -25,8 +25,10 @@ void AMeleeWeapon::WeaponHit(AActor* Other, AController* Controller)
 	{
 		if (Controller)
 		{
-			UGameplayStatics::ApplyDamage(Other, 10.0f, Controller, this, UDamageType::StaticClass());
+			UGameplayStatics::ApplyDamage(Other, AttackDamage, Controller, this, UDamageType::StaticClass());
 			IgnoredActors.AddUnique(Other);
+
+			OnHit(Other);
 		}
 	}
 }

@@ -13,5 +13,11 @@ UCLASS()
 class LABO2UNREAL_API ALabo2UnrealGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnWinGame();
+
+	virtual APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot) override;
+
+	virtual bool SpawnDefaultPawnFor_Validate(AController* NewPlayer, AActor* StartSpot);
 };

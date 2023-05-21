@@ -5,12 +5,14 @@
 #include "CharacterAttribute.h"
 #include "ItemData.h"
 #include "MyGameInstance.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "MeleeWeapon.h"
 
 // Sets default values
 AAvatar::AAvatar()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
@@ -19,6 +21,27 @@ void AAvatar::BeginPlay()
 	Super::BeginPlay();
 
 	LoadData();
+
+	bAnimAttackPlaying = false;
+
+	if (Attributes && Attributes->MeleeWeaponClass)
+	{
+		UWorld* World = GetWorld();
+		MeleeWeapon = World->SpawnActor<AMeleeWeapon>(Attributes->MeleeWeaponClass, FVector(), FRotator());
+
+		const USkeletalMeshSocket* Socket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+		if (Socket)
+		{
+			Socket->AttachActor(MeleeWeapon, GetMesh());
+		}
+	}
+}
+
+void AAvatar::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	AttackTimer -= DeltaTime;
 }
 
 // Called to bind functionality to input
@@ -75,7 +98,18 @@ float AAvatar::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 
 	if (GetIsDead())
 	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance && Attributes && Attributes->AttackMontage)
+		{
+			AnimInstance->Montage_Stop(0.10f, Attributes->AttackMontage);
+			if (MeleeWeapon)
+			{
+				MeleeWeapon->ResetSwing();
+			}
+		}
+
 		ResetData();
+		Dead();
 		AvatarDeadDelegate.Broadcast();
 	}
 
@@ -92,6 +126,55 @@ void AAvatar::LoadData()
 
 void AAvatar::ResetData()
 {
+}
+
+void AAvatar::BeginAttack()
+{
+	if (MeleeWeapon)
+	{
+		MeleeWeapon->BeginSwing(this);
+	}
+}
+
+void AAvatar::EndAttack()
+{
+	if (MeleeWeapon)
+	{
+		MeleeWeapon->ResetSwing();
+	}
+}
+
+void AAvatar::BeginAttackAnim()
+{
+	bAnimAttackPlaying = true;
+}
+
+void AAvatar::EndAttackAnim()
+{
+	bAnimAttackPlaying = false;
+}
+
+void AAvatar::Attack()
+{
+	if (AttackTimer <= 0.0f && Attributes)
+	{
+		if (Attributes->AttackMontage)
+		{
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			if (AnimInstance)
+			{
+				AnimInstance->Montage_JumpToSection(FName("Slash"), Attributes->AttackMontage);
+				AnimInstance->Montage_Play(Attributes->AttackMontage);
+			}
+		}
+
+		AttackTimer = Attributes->AttackRate;
+	}
+}
+
+bool AAvatar::GetIsAttacking()
+{
+	return bAnimAttackPlaying;
 }
 
 void AAvatar::SetHealth(float Healt)
